@@ -163,7 +163,7 @@ st.plotly_chart(fig)
 # --- AI Summary (Static Placeholder) ---
 st.header(":robot_face: AI Summary")
 st.markdown("""
-**Summary**: Based on current trends in store count and inflation (CPI), revenue is expected to grow modestly over the next four quarters. One or more quarters show expected values exceeding the statistical forecast, suggesting possible aggressive assumptions. Audit focus should consider macroeconomic sensitivity and operational expansion.
+**Summary**: The ARIMAX forecast, incorporating marketing spend and CPI data, projects revenue patterns that diverge from Starbucks' historical trends. This inconsistency may suggest potential overstatement in expected revenues or unusual operational behavior. Notably, marketing expenditures increase sharply in late 2022 and 2023 while revenue growth remains flat—indicating that sales boosts may be driven more by promotional efforts than organic performance. Given this pattern, further investigation is recommended to assess possible misstatements.
 """)
 
 # Footer
