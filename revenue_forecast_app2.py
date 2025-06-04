@@ -48,15 +48,58 @@ def forecast_revenue(df, periods=4):
 
 # --- App Layout ---
 st.set_page_config(page_title="Starbucks Revenue Risk Analyzer", layout="centered")
-st.title("🌟 Starbucks Revenue Risk Analyzer")
+st.title("Starbucks Revenue Risk Analyzer")
 
 st.markdown("""
-This tool helps auditors evaluate the risk of revenue overstatement using ARIMAX forecasting.
-
-- Model: ARIMAX with CPI and Store Count
-- Input: Expected Revenue for next 4 quarters
-- AI Insight and Risk Alerts included
+**Thesis statement**: Through incorporating forecasting analysis and Artificial Intelligence integration, the analysis illustrates Starbucks' risk of revenue overstatement from 2018 to 2023 in quarterly intervals. It allows us to reveal potential misstatement and fraud, depending on the severity of the investigation.
 """)
+
+# --- Full Historical + Forecast + Expected Revenue Visualization ---
+st.header("Historical Revenue, Forecast, and Expected Values")
+
+# Prepare full ARIMAX forecast visualization
+df = pd.read_csv("starbucks_financials_expanded.csv", parse_dates=['date'])
+df.set_index("date", inplace=True)
+full_df = df.dropna(subset=["CPI"])
+exog = full_df[["CPI"]]
+model_full = ARIMA(full_df["revenue"], order=(1, 1, 1), exog=exog)
+results_full = model_full.fit()
+
+# Forecast with last known exog values
+last_exog = exog.iloc[-1].values.reshape(1, -1)
+future_exog = np.tile(last_exog, (4, 1))
+forecast_full = results_full.get_forecast(steps=4, exog=future_exog)
+forecast_values = forecast_full.predicted_mean
+conf_int = forecast_full.conf_int()
+future_index = pd.date_range(start=full_df.index[-1] + pd.offsets.QuarterEnd(), periods=4, freq="Q")
+expected = forecast_values.tolist()
+
+# Plot
+fig_full = go.Figure()
+fig_full.add_trace(go.Scatter(x=full_df.index, y=full_df["revenue"], name="Historical Revenue", mode="lines"))
+fig_full.add_trace(go.Scatter(x=future_index, y=forecast_values, name="Forecast", mode="lines+markers"))
+fig_full.add_trace(go.Scatter(x=future_index, y=expected, name="Expected (User Input)", mode="lines+markers"))
+# Add shaded 95% confidence interval
+fig_full.add_trace(go.Scatter(
+    x=pd.Series(future_index).append(pd.Series(future_index[::-1]), ignore_index=True),
+    y=pd.Series(conf_int.iloc[:, 0]).append(pd.Series(conf_int.iloc[:, 1][::-1]), ignore_index=True),
+    fill='toself',
+    fillcolor='rgba(160,160,160,0.3)',
+    line=dict(color='rgba(255,255,255,0)'),
+    hoverinfo="skip",
+    showlegend=True,
+    name="95% Confidence Interval"
+))
+
+fig_full.update_layout(
+    title="Starbucks Quarterly Revenue Forecast with User Expectations",
+    xaxis_title="Date",
+    yaxis_title="Revenue ($M)",
+    legend_title="Legend",
+    template="plotly_white"
+)
+
+st.plotly_chart(fig_full)
 
 # Load data and CPI
 df = load_data()
