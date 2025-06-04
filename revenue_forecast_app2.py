@@ -155,8 +155,17 @@ future_dates = pd.date_range(start=df.index[-1] + pd.offsets.QuarterEnd(), perio
 fig = go.Figure()
 fig.add_trace(go.Scatter(x=future_dates, y=forecast, name="Forecast", mode="lines+markers"))
 fig.add_trace(go.Scatter(x=future_dates, y=expected, name="Expected", mode="lines+markers"))
-fig.add_trace(go.Scatter(x=future_dates, y=conf.iloc[:, 0], name="Lower CI", line=dict(dash='dot')))
-fig.add_trace(go.Scatter(x=future_dates, y=conf.iloc[:, 1], name="Upper CI", line=dict(dash='dot')))
+# Add shaded 95% confidence interval
+fig.add_trace(go.Scatter(
+    x=pd.Series(future_dates).append(pd.Series(future_dates[::-1]), ignore_index=True),
+    y=pd.Series(conf.iloc[:, 0]).append(pd.Series(conf.iloc[:, 1][::-1]), ignore_index=True),
+    fill='toself',
+    fillcolor='rgba(160,160,160,0.3)',
+    line=dict(color='rgba(255,255,255,0)'),
+    hoverinfo="skip",
+    showlegend=True,
+    name="95% Confidence Interval"
+))
 fig.update_layout(title="Forecasted vs Expected Revenue", xaxis_title="Quarter", yaxis_title="Revenue ($M)")
 st.plotly_chart(fig)
 
