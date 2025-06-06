@@ -140,13 +140,16 @@ for i in range(4):
 st.header("🚨 Risk Alert")
 risk_msgs = []
 for i in range(4):
-    if expected[i] > conf.iloc[i, 1]:
+    lower, upper = conf.iloc[i, 0], conf.iloc[i, 1]
+    if expected[i] > upper:
         risk_msgs.append(f"- Q{i+1} expected revenue **exceeds** 95% CI upper bound.")
+    elif expected[i] < lower:
+        risk_msgs.append(f"- Q{i+1} expected revenue **falls below** 95% CI lower bound.")
 
 if risk_msgs:
     st.error("\n".join(risk_msgs))
 else:
-    st.success("Expected revenue is within forecasted range.")
+    st.success("Expected revenue is within the forecasted confidence range.")
 
 # --- Visualization ---
 st.header(":chart_with_upwards_trend: Forecast vs Expected")
