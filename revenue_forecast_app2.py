@@ -51,7 +51,7 @@ st.set_page_config(page_title="Starbucks Revenue Risk Analyzer", layout="centere
 st.title("Starbucks Revenue Risk Analyzer")
 
 st.markdown("""
-**Thesis statement**: Through incorporating forecasting analysis and Artificial Intelligence integration, the analysis illustrates Starbucks' risk of revenue overstatement from 2018 to 2023 in quarterly intervals. It allows us to reveal potential misstatement and fraud, depending on the severity of the investigation.
+**Thesis statement**: Through incorporating forecasting analysis and Artificial Intelligence integration, our analysis indicates that Starbucks’ is at a high risk for revenue overstatement. Our app’s forecast suggests that reported revenue may not fully align with economic conditions and operational performance, raising a red flag for auditors.​
 """)
 
 # --- Full Historical + Forecast + Expected Revenue Visualization ---
